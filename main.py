@@ -3,6 +3,8 @@ from discord.ext import commands
 import json
 import os
 import re
+from flask import Flask
+⁠import threading
 
 # ==========================================
 # 1. 봇 기본 설정
