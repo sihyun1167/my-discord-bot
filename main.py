@@ -163,7 +163,7 @@ async def 환불(ctx, member: discord.Member, amount: int):
 
     message_text = (
         f"┈ㆍ{member.mention}\n"
-        f"<a:D_A_10:1550376622060736552>┄。{amount:,}원 환불 처리되었습니다. ₊⋆\n"
+        f"<a:D_A_10:1550376622060736552>┄。{amount:,}원 환불╥﹏╥₊⋆\n"
         f"╰୧ㆍ현재 누적 {current_total:,}원⸝⸝♡"
     )
 
