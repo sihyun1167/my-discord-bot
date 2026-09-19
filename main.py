@@ -164,4 +164,4 @@ async def 환불(ctx, member: discord.Member, amount: int):
 # ==========================================
 # 4. 봇 실행
 # ==========================================
-bot.run('TOKEN')
+bot.run(os.getenv('TOKEN'))
