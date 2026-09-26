@@ -27,6 +27,16 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 DATA_FILE = 'donations.json'
 TARGET_CHANNEL_ID = 1550346247506755584
+ALLOWED_ROLE_ID = 1550952068557045931  # 명령어 사용 허용 역할 ID
+
+# ------------------------------------------
+# [권한 체크 함수]
+# 관리자 권한이 있거나 특정 역할(ALLOWED_ROLE_ID)을 보유한 경우 허용
+# ------------------------------------------
+def is_admin_or_allowed_role(ctx):
+    if ctx.author.guild_permissions.administrator:
+        return True
+    return any(role.id == ALLOWED_ROLE_ID for role in ctx.author.roles)
 
 # ------------------------------------------
 # [후원 역할 및 이모지 설정]
@@ -75,7 +85,8 @@ async def update_member_role_and_nickname(member: discord.Member, total_amount: 
                     await member.remove_roles(role)
                 except discord.Forbidden:
                     print(f"권한 오류: {role.name} 역할을 제거할 권한이 없습니다.")
-# 2. 닉네임 이모지 교체 여부 판단 (기존 역할 vs 후원 역할 높이 비교)
+
+    # 2. 닉네임 이모지 교체 여부 판단 (기존 역할 vs 후원 역할 높이 비교)
     current_nick = member.display_name
     emoji_pattern = re.compile(
         r'[\U00010000-\U0010ffff]|[\u2600-\u27ff]|[\u2300-\u23ff]',
@@ -114,7 +125,7 @@ async def on_ready():
 # 2. 후원 추가 명령어 (!후원 @이름 금액)
 # ==========================================
 @bot.command()
-@commands.has_permissions(administrator=True)
+@commands.check(is_admin_or_allowed_role)
 async def 후원(ctx, member: discord.Member, amount: int):
     data = load_data()
     user_id = str(member.id)
@@ -146,7 +157,7 @@ async def 후원(ctx, member: discord.Member, amount: int):
 # 3. 환불 명령어 (!환불 @이름 금액)
 # ==========================================
 @bot.command()
-@commands.has_permissions(administrator=True)
+@commands.check(is_admin_or_allowed_role)
 async def 환불(ctx, member: discord.Member, amount: int):
     data = load_data()
     user_id = str(member.id)
@@ -176,6 +187,14 @@ async def 환불(ctx, member: discord.Member, amount: int):
     await update_member_role_and_nickname(member, current_total)
 
 # ==========================================
-# 4. 봇 실행
+# 4. 권한 부족 시 에러 메시지 처리
+# ==========================================
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send("❌ 이 명령어는 관리자 또는 권한을 가진 사용자만 사용할 수 있습니다.")
+
+# ==========================================
+# 5. 봇 실행
 # ==========================================
 bot.run(os.getenv('TOKEN'))
