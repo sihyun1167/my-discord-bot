@@ -139,7 +139,7 @@ async def 후원(ctx, member: discord.Member, amount: int):
 
     current_total = data[user_id]['total']
 
-   # 임베드 상자 안에 요청하신 전체 문구 넣기
+  # 기존 임베드 상자 안 내용 (원래 하던 것 그대로)
     embed_text = (
         f"┈ㆍ{member.mention}\n"
         f"<a:C_A_06:1557193252216508508> ┄。{amount:,}원 후원！ ₊⋆\n"
@@ -150,7 +150,8 @@ async def 후원(ctx, member: discord.Member, amount: int):
     target_channel = bot.get_channel(TARGET_CHANNEL_ID)
     send_channel = target_channel if target_channel else ctx
 
-    await send_channel.send(embed=embed)
+    # 임베드 상자 위에 추가로 태그(핑)를 올리고, 그 아래 기존 임베드 출력
+    await send_channel.send(content=f"{member.mention}", embed=embed)
 
     # 역할 및 이모지 업데이트
     await update_member_role_and_nickname(member, current_total)
@@ -174,7 +175,7 @@ async def 환불(ctx, member: discord.Member, amount: int):
 
     current_total = data[user_id]['total']
 
-   # 임베드 상자 안에 요청하신 전체 환불 문구 넣기
+   # 기존 임베드 상자 안 내용 (원래 하던 것 그대로)
     embed_text = (
         f"┈ㆍ{member.mention}\n"
         f"<a:E_A_06:1557193249049935934> ┄。{amount:,}원 환불！ ₊⋆\n"
@@ -185,7 +186,8 @@ async def 환불(ctx, member: discord.Member, amount: int):
     target_channel = bot.get_channel(TARGET_CHANNEL_ID)
     send_channel = target_channel if target_channel else ctx
 
-    await send_channel.send(embed=embed)
+    # 임베드 상자 위에 추가로 태그(핑)를 올리고, 그 아래 기존 임베드 출력
+    await send_channel.send(content=f"{member.mention}", embed=embed)
 
     # 환불된 금액에 맞춰 역할 회수 및 이모지 강등 처리
     await update_member_role_and_nickname(member, current_total)
