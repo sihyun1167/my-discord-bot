@@ -175,18 +175,19 @@ async def 환불(ctx, member: discord.Member, amount: int):
 
     current_total = data[user_id]['total']
 
-   # 기존 임베드 상자 안 내용 (원래 하던 것 그대로)
+# 기존 임베드 상자 안 내용 (원래 하던 것 그대로)
     embed_text = (
         f"┈ㆍ{member.mention}\n"
         f"<a:E_A_06:1557193249049935934> ┄。{amount:,}원 환불！ ₊⋆\n"
         f"╰୧ㆍ누적 {current_total:,}원⸝⸝♡"
     )
-    embed = discord.Embed(description=embed_text, color=0xFF6B6B)
+    # color=0x000000 으로 지정하여 검은색 임베드 생성
+    embed = discord.Embed(description=embed_text, color=0x000000)
 
     target_channel = bot.get_channel(TARGET_CHANNEL_ID)
     send_channel = target_channel if target_channel else ctx
 
-    # 임베드 상자 위에 추가로 태그(핑)를 올리고, 그 아래 기존 임베드 출력
+    # 임베드 상자 위에 추가로 태그(핑)를 올리고, 그 아래 검은색 임베드 출력
     await send_channel.send(content=f"{member.mention}", embed=embed)
 
     # 환불된 금액에 맞춰 역할 회수 및 이모지 강등 처리
